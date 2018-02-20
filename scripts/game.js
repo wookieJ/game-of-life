@@ -9,19 +9,19 @@ const planeHeight = 900;
  */
 function Grid(w, h)
 {
-    this.width = w;
-    this.height = h;
     this.step = w < h ? w/(w<250 ? 10 : 50) : h/(h<250 ? 10 : 50);
+    this.columns = Math.floor(w / this.step);
+    this.rows = Math.floor(h / this.step);
     this.grid = [];
     
-    for(i=0 ; i<this.width ; i++)
+    for(i=0 ; i<this.columns ; i++)
     {
         this.grid[i] = [];
-        for(j=0 ; j<this.height ; j++)
+        for(j=0 ; j<this.rows ; j++)
             this.grid[i][j] = 0;
     }
     
-    console.log(">> grid (" + this.width + ";" + this.height + ") created");
+    console.log(">> grid (" + this.columns + ";" + this.rows + ") created");
 }
 
 /**
@@ -29,9 +29,9 @@ function Grid(w, h)
  */
 Grid.prototype.checkCellValue = function()
 {
-    for(i=0 ; i<this.width ; i++)
+    for(i=0 ; i<this.columns ; i++)
     {
-        for(j=0 ; j<this.height ; j++)
+        for(j=0 ; j<this.rows ; j++)
         {
             if(this.grid[i][j] == 1)
             {
@@ -65,11 +65,10 @@ function setup()
     
     // stworzenie siatki
     grid = new Grid(planeWidth, planeHeight);
-    //grid.draw();
-    console.log(grid.grid[0][0]);
+    
     grid.grid[15][15] = 1;
-    grid.checkCellValue();
-//    grid.addRandomCells();
+    grid.grid[16][15] = 1;
+    grid.grid[17][15] = 1;
 }
 
 /*
@@ -77,8 +76,9 @@ function setup()
  */
 function run()
 {
-    
+    grid.grid[16][15] == 1 ? grid.grid[16][15]=0 : grid.grid[16][15]=1;
+    grid.checkCellValue();
 }
 
 setup();
-setInterval(run,100);
+setInterval(run,750);
