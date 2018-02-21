@@ -3,12 +3,17 @@ const ctx = canvasElem.getContext('2d');
 
 const startButton = document.getElementById('startButton');
 const editButton = document.getElementById('editButton');
+const clearButton = document.getElementById('clearButton');
+const randomButton = document.getElementById('randomButton');
 
 const paneWidth = 600;
 const paneHeight = 600;
 
 var playGeneration = false;
 var editable = false;
+
+// stworzenie siatki
+grid = new Grid(paneWidth, paneHeight);
 
 /**
  * Grid - plansza gry w życie
@@ -24,7 +29,7 @@ function Grid(w, h)
     {
         this.grid[i] = [];
         for(j=0 ; j<this.rows ; j++)
-            this.grid[i][j] = 0;
+            this.grid[i][j] = Math.random() < 0.5 ? 0 : 1;
     }
     
     console.log(">> grid (" + this.columns + ";" + this.rows + ") created");
@@ -119,12 +124,19 @@ Grid.prototype.playGeneration = function()
 function startButtonListener()
 {
     console.log(">> startButton status: " + playGeneration);
-    playGeneration = playGeneration == true ? false : true;
         
     if(playGeneration == true)
-        startButton.textContent = "STOP";
-    else
+    {
+        playGeneration = false;
         startButton.textContent = "START";
+    }
+    else
+    {
+        playGeneration = true;
+        editable = false;
+        editButton.textContent = "EDIT";
+        startButton.textContent = "STOP";
+    }
 }
 
 /*
@@ -133,12 +145,60 @@ function startButtonListener()
 function editButtonListener()
 {
     console.log(">> editButton status: " + editable);
-    editable = editable == true ? false : true;
         
-    if(editable == true)
-        editable.textContent = "EDIT";
+    if(editable == false && playGeneration == false)
+    {
+        editable = true;
+        editButton.textContent = "STOP EDIT";
+    }
     else
-        editable.textContent = "STOP EDIT";
+    {
+        editable = false;
+        editButton.textContent = "EDIT";
+    }
+}
+
+/*
+ * Funkcja czyści pole
+ */
+function clearButtonListener()
+{
+    for(i=0 ; i<grid.columns ; i++)
+    {
+        grid.grid[i] = [];
+        for(j=0 ; j<grid.rows ; j++)
+            grid.grid[i][j] = 0;
+    }
+}
+
+/*
+ * Funkcja uzupełnia losowo siatkę
+ */
+function randomButtonListener()
+{
+    for(i=0 ; i<grid.columns ; i++)
+    {
+        grid.grid[i] = [];
+        for(j=0 ; j<grid.rows ; j++)
+            grid.grid[i][j] = Math.random() < 0.5 ? 0 : 1;
+    }
+}
+
+/*
+ * Funkcja służąca do edycji komórek na planszy poprzez kliknięcie myszką
+ */
+function invertCell(event)
+{
+    if(editable)
+    {
+        idx = Math.floor((event.clientX - canvasElem.offsetLeft - 25) / grid.step);
+        idy = Math.floor((event.clientY - canvasElem.offsetTop - 25) / grid.step);
+
+        if(idx>=0 && idx<grid.columns && idy>=0 && idy<grid.rows)
+        {
+           grid.grid[idx][idy] = grid.grid[idx][idy] == 1 ? 0 : 1;
+        }
+    }
 }
 
 /*
@@ -151,25 +211,17 @@ function setup()
     canvasElem.height = paneHeight;
     canvasElem.style.backgroundColor = "white"
     
-    // stworzenie siatki
-    grid = new Grid(paneWidth, paneHeight);
+    initialStart = playGeneration == true ? "STOP" : "START";
+    startButton.textContent = initialStart;
+    
+    initialStart = editable == true ? "EDIT STOP" : "EDIT";
+    editButton.textContent = initialStart;
     
     startButton.addEventListener("click", startButtonListener);
     editButton.addEventListener("click", editButtonListener);
-    
-    // szybowiec
-    grid.grid[35][25] = 1;
-    grid.grid[36][25] = 1;
-    grid.grid[37][25] = 1;
-    grid.grid[35][26] = 1;
-    grid.grid[36][27] = 1;
-    
-    // szybowiec
-    grid.grid[5][5] = 1;
-    grid.grid[6][5] = 1;
-    grid.grid[7][5] = 1;
-    grid.grid[5][6] = 1;
-    grid.grid[6][7] = 1;
+    clearButton.addEventListener("click", clearButtonListener);
+    randomButton.addEventListener("click", randomButtonListener);
+    canvasElem.addEventListener("click", invertCell);
 }
 
 /*
@@ -180,8 +232,7 @@ function run()
     if(playGeneration == true)
         grid.playGeneration();
     grid.checkCellValue();
-    
-    // edycja
+    // nr generacji
 }
 
 setup();
