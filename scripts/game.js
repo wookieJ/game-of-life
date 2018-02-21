@@ -25,7 +25,7 @@ function Grid(w, h)
 }
 
 /**
- * Funkcja sprawdzająca stan pól planszy
+ * Funkcja rysująca wypełnienie martwych i żywych komórek
  */
 Grid.prototype.checkCellValue = function()
 {
@@ -53,6 +53,62 @@ Grid.prototype.checkCellValue = function()
     }
 }
 
+/**
+ * Funkcja sprawdzająca stan pól planszy
+ */
+Grid.prototype.playGeneration = function()
+{
+    copyGrid = [];
+    for(i=0 ; i<this.columns ; i++)
+    {
+        copyGrid[i] = [];
+        for(j=0 ; j<this.rows ; j++)
+            copyGrid[i][j] = this.grid[i][j];
+    }
+    
+    for(i=0 ; i<this.columns ; i++)
+    {
+        for(j=0 ; j<this.rows ; j++)
+        {        
+            var cellCounter = 0;
+            
+            for(k=-1 ; k<2 ; k++)
+            {
+//                console.log(k);
+                for(l=-1 ; l<2 ; l++)
+                {
+                    if(k != 0 || l != 0)
+                    {
+                        idx = i+k;
+                        idy = j+l;
+                        
+                        if(idx >= 0 && idy >=0 && idx < this.columns && idy < this.rows)
+                        {
+                            // zabezepiczyć na brzegach albo zapętlić
+                            if(this.grid[idx][idy] == 1)
+                                cellCounter++;
+                        }
+                    }
+                }
+            }            
+//            console.log(cellCounter);
+            if(this.grid[i][j] == 0 && cellCounter == 3)
+            {
+                copyGrid[i][j] = 1;
+//                console.log("ALIVE");
+            }
+            
+            else if(this.grid[i][j] == 1 && (cellCounter < 2 || cellCounter > 3))
+            {
+                copyGrid[i][j] = 0;
+//                console.log("DEAD");
+            }
+        }
+    }
+    
+    this.grid = copyGrid;
+}
+
 /*
  *  Setup function
  */
@@ -66,9 +122,12 @@ function setup()
     // stworzenie siatki
     grid = new Grid(planeWidth, planeHeight);
     
-    grid.grid[15][15] = 1;
-    grid.grid[16][15] = 1;
-    grid.grid[17][15] = 1;
+    // szybowiec
+    grid.grid[35][25] = 1;
+    grid.grid[36][25] = 1;
+    grid.grid[37][25] = 1;
+    grid.grid[35][26] = 1;
+    grid.grid[36][27] = 1;
 }
 
 /*
@@ -76,9 +135,13 @@ function setup()
  */
 function run()
 {
-    grid.grid[16][15] == 1 ? grid.grid[16][15]=0 : grid.grid[16][15]=1;
+    grid.playGeneration();
     grid.checkCellValue();
+    
+    // dodać brzegi / zapętlić
+    // przycisk start/stop
+    // edycja
 }
 
 setup();
-setInterval(run,750);
+setInterval(run,50);
