@@ -7,8 +7,8 @@ const clearButton = document.getElementById('clearButton');
 const randomButton = document.getElementById('randomButton');
 const generationNumberLabel = document.getElementById("generationNumber");
 
-const paneWidth = 900;
-const paneHeight = 900;
+const paneWidth = 800;
+const paneHeight = 600;
 
 var playGeneration = false;
 var editable = false;
@@ -22,7 +22,7 @@ grid = new Grid(paneWidth, paneHeight);
  */
 function Grid(w, h)
 {
-    this.step = w < h ? w/(w<250 ? 10 : 100) : h/(h<250 ? 10 : 100);
+    this.step = w < h ? w/(w<250 ? 10 : 50) : h/(h<250 ? 10 : 50);
     this.columns = Math.floor(w / this.step);
     this.rows = Math.floor(h / this.step);
     this.grid = [];
