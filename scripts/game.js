@@ -5,12 +5,14 @@ const startButton = document.getElementById('startButton');
 const editButton = document.getElementById('editButton');
 const clearButton = document.getElementById('clearButton');
 const randomButton = document.getElementById('randomButton');
+const generationNumberLabel = document.getElementById("generationNumber");
 
-const paneWidth = 600;
-const paneHeight = 600;
+const paneWidth = 900;
+const paneHeight = 900;
 
 var playGeneration = false;
 var editable = false;
+var generationNumber = 0;
 
 // stworzenie siatki
 grid = new Grid(paneWidth, paneHeight);
@@ -20,7 +22,7 @@ grid = new Grid(paneWidth, paneHeight);
  */
 function Grid(w, h)
 {
-    this.step = w < h ? w/(w<250 ? 10 : 50) : h/(h<250 ? 10 : 50);
+    this.step = w < h ? w/(w<250 ? 10 : 100) : h/(h<250 ? 10 : 100);
     this.columns = Math.floor(w / this.step);
     this.rows = Math.floor(h / this.step);
     this.grid = [];
@@ -163,12 +165,17 @@ function editButtonListener()
  */
 function clearButtonListener()
 {
+    playGeneration = false;
+    startButton.textContent = "START";
+    generationNumber = 0;
+    
     for(i=0 ; i<grid.columns ; i++)
     {
         grid.grid[i] = [];
         for(j=0 ; j<grid.rows ; j++)
             grid.grid[i][j] = 0;
     }
+    
 }
 
 /*
@@ -182,6 +189,7 @@ function randomButtonListener()
         for(j=0 ; j<grid.rows ; j++)
             grid.grid[i][j] = Math.random() < 0.5 ? 0 : 1;
     }
+    generationNumber = 0;
 }
 
 /*
@@ -191,12 +199,12 @@ function invertCell(event)
 {
     if(editable)
     {
-        idx = Math.floor((event.clientX - canvasElem.offsetLeft - 25) / grid.step);
-        idy = Math.floor((event.clientY - canvasElem.offsetTop - 25) / grid.step);
+        idx = Math.floor((event.clientX - canvasElem.offsetLeft - 20) / grid.step);
+        idy = Math.floor((event.clientY - canvasElem.offsetTop - 20) / grid.step);
 
         if(idx>=0 && idx<grid.columns && idy>=0 && idy<grid.rows)
         {
-           grid.grid[idx][idy] = grid.grid[idx][idy] == 1 ? 0 : 1;
+            grid.grid[idx][idy] = grid.grid[idx][idy] == 1 ? 0 : 1;
         }
     }
 }
@@ -229,10 +237,13 @@ function setup()
  */
 function run()
 {
+    generationNumberLabel.textContent = generationNumber;
     if(playGeneration == true)
+    {
         grid.playGeneration();
+        generationNumber++;
+    }
     grid.checkCellValue();
-    // nr generacji
 }
 
 setup();

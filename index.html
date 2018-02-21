@@ -8,16 +8,24 @@
 <body>
     <table>
         <tr>
-            <td><canvas id="canvas"></canvas></td>
+	       <td rowspan="5">    <canvas id="canvas"></canvas>  </td> <td>  <button id="startButton"></button>  </td>
         </tr>
         <tr>
-            <td>
-                <button id="startButton"></button>
-                <button id="editButton"></button>
-                <button id="clearButton">CLEAR</button>
+	        <td>    <button id="editButton"></button>  </td>
+        </tr>
+        <tr>
+            <td>    <button id="clearButton">CLEAR</button> </td>
+        </tr>
+        <tr>
+            <td>    <button id="randomButton">RANDOM</button>   </td>
+        </tr>
+        <tr align = "center">
+            <td colspan="2">
+                Generacja:
+                <div id="generationNumber">0</div>
             </td>
         </tr>
-    </table>
+    </table>   
     
     <script src="scripts/game.js"></script>
 </body>
